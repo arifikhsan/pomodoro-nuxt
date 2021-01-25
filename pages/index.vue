@@ -7,17 +7,18 @@
       <div class="text-center">
         <button
           @click="start"
-          class="w-48 h-48 text-2xl font-bold tracking-wider text-white uppercase transition duration-500 transform bg-green-500 rounded-full hover:scale-105 focus:outline-none hover:shadow-outline"
+          class="w-48 h-48 text-2xl font-bold tracking-wider text-white uppercase transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:from-pink-500 focus:to-red-500 hover:scale-105 focus:outline-none hover:shadow-outline"
         >
-          Mulai
+          <span>25:00</span><br />
+          <span>Mulai</span>
         </button>
       </div>
       <div class="mt-8 text-center">
-        <h2 class="text-4xl font-bold text-green-500">
+        <h2 class="text-4xl font-bold leading-none text-green-500">
           {{ currentTodo.text }}
         </h2>
       </div>
-      <div class="grid gap-4 mt-8 text-center">
+      <div class="grid gap-4 py-8 text-center">
         <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
         <div class="grid gap-4">
           <div
@@ -65,14 +66,44 @@
           </div>
         </div>
       </div>
+      <div class="pt-8 border-t">
+        <div class="prose lg:prose-xl">
+          <div>
+            <h1>Cara menggunakan Pomodoro timer</h1>
+            <ol>
+              <li>Tambahkan kegiatan baru.</li>
+              <li>Pilih kegiatan yang mau dikerjakan.</li>
+              <li>Mulai timer kemudian fokus selama 25 menit.</li>
+              <li>Istirahat selama 5 menit ketika alarm berbunyi.</li>
+              <li>Ulangi 3-5 kali sampai kegiatan tersebut selesai.</li>
+            </ol>
+          </div>
+          <div>
+            <h1>Fitur</h1>
+            <ul>
+              <li>Desain responsif untuk layar desktop dan hp.</li>
+              <li>Notifikasi audio.</li>
+              <li>
+                (Segera datang) Transisi warna untuk menyesuaikan mood ketika
+                bekerja dan istirahat.
+              </li>
+              <li>(Segera datang) Statistik.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   data() {
     return {
+      run: false,
+      distance: 0,
       todos: [],
       dummyTodos: [
         {
@@ -98,9 +129,9 @@ export default {
       return this.todos[0];
     },
     nextTodos() {
-      let currentTodos = [...this.todos]
-      currentTodos.shift()
-      return currentTodos
+      let currentTodos = [...this.todos];
+      currentTodos.shift();
+      return currentTodos;
     }
   },
   created() {
@@ -108,7 +139,19 @@ export default {
   },
   methods: {
     start() {
-      console.log("mulai");
+      // console.log("mulai");
+
+      let timeStart = new Date().getTime()
+      this.run = true
+      let timeUntil = new Date().getTime()
+      timeUntil = moment(timeUntil).add(25, 'minute').toDate().getTime()
+
+      console.log(timeStart)
+      console.log(timeUntil)
+
+      setInterval(() => {
+        this.distance = timeUntil - timeStart
+      }, 1000);
     }
   }
 };

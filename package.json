@@ -1,5 +1,5 @@
 {
-  "name": "pomodoro-nuxt",
+  "name": "Pomodoro",
   "version": "1.0.0",
   "description": "My stunning Nuxt.js project",
   "author": "Arif Ikhsanudin",
@@ -11,6 +11,8 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.4.0",
+    "moment": "^2.29.1",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
