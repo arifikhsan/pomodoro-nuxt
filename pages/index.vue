@@ -144,6 +144,11 @@ import edit from "@/components/icons/edit";
 import deleteIcon from "@/components/icons/delete";
 
 export default {
+  head() {
+    return {
+      title: this.title
+    };
+  },
   components: {
     "play-icon": play,
     "pause-icon": pause,
@@ -194,6 +199,25 @@ export default {
     };
   },
   computed: {
+    title() {
+      return `${this.formattedTimeLeft} | ${this.titlePomoState} | ${this.titlePomoCount}`;
+    },
+    titlePomoState() {
+      if (this.state == 0) {
+        return "Siap Bekerja";
+      } else if (this.state == 1) {
+        return "Selamat Bekerja";
+      } else {
+        return "Berhenti Sementara";
+      }
+    },
+    titlePomoCount() {
+      if (this.pomoCount > 0) {
+        return `${this.pomoCount} Pomodoro`;
+      } else {
+        return "Pomodoro";
+      }
+    },
     currentTodo() {
       return this.todos[0];
     },
@@ -232,12 +256,12 @@ export default {
       this.timePassed = 0;
     },
     shortRestTimeSelected() {
-      this.timeLimit = 3;
+      this.timeLimit = 2;
       this.timeActive = "short";
       this.timePassed = 0;
     },
     longRestTimeSelected() {
-      this.timeLimit = 2;
+      this.timeLimit = 3;
       this.timeActive = "long";
       this.timePassed = 0;
     },
