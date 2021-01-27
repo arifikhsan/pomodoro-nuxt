@@ -1,12 +1,24 @@
 <template>
   <div class="max-w-5xl px-4 pb-16 mx-auto">
     <div class="flex items-center justify-between py-2 text-center border-b">
-      <h1 class="text-3xl font-bold text-green-500">Pomodoro</h1>
-      <button class="px-4 py-2 text-sm text-white bg-green-500 rounded">
-        Sign In
+      <h1 class="text-3xl font-bold text-green-500">
+        <span v-show="pomoCount > 0">{{ pomoCount }}</span>
+        <span>Pomodoro</span>
+      </h1>
+      <button
+        class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
+      >
+        Login
       </button>
     </div>
-    <div class="mt-8 text-center">
+    <div v-show="message" class="my-4 text-center">
+      <p
+        class="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded"
+      >
+        {{ message }}
+      </p>
+    </div>
+    <div class="mt-4 text-center">
       <div>
         <p class="text-5xl font-bold text-green-500">{{ formattedTimeLeft }}</p>
       </div>
@@ -50,7 +62,7 @@
           15:00
         </button>
       </div>
-      <div class="mt-4 space-x-2">
+      <div class="mt-6 space-x-2">
         <button
           v-if="state == 0 || state == 2"
           @click="startPomo"
@@ -177,7 +189,8 @@ export default {
       shortRestDone: false,
       longRestDone: false,
 
-      pomoCount: 0
+      pomoCount: 0,
+      message: "Klik tombol play untuk mulai bekerja."
     };
   },
   computed: {
@@ -250,15 +263,26 @@ export default {
       if (this.timeActive == "pomo") {
         this.pomoCount += 1;
         console.log("done, short rest time");
+        this.message =
+          "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
         this.shortRestTimeSelected();
       } else if (this.timeActive == "short") {
         if (this.pomoCount < 3) {
           console.log("done, time to work again");
+          this.message = "Waktu istirahat selesai. Ayo bekerja lagi :D";
           this.pomoTimeSelected();
         } else {
+          this.message =
+            "Kerja bagus. Nikmatilah istirahat panjang selama 15 menit XD";
           console.log("done, walk");
+          this.pomoCount = 0;
           this.longRestTimeSelected();
+          // yay enjoy!
         }
+      } else if (this.timeActive == "long") {
+        this.message =
+          "Semoga harimu menyenangkan, selamat bekerja, buatlah sesuatu yang keren :D";
+        this.pomoTimeSelected();
       } else {
         console.log("congrats");
       }
@@ -270,6 +294,15 @@ export default {
       // stop
 
       this.startTimer();
+      if (this.timeActive == "pomo") {
+        this.message = "Selamat bekerja :)";
+      } else if (this.timeActive == "short") {
+        this.message =
+          "Ambilah minum atau regangkan kepala, pundak, dan bahu :D";
+      } else if (this.timeActive == "long") {
+        this.message =
+          "Saatnya untuk jalan-jalan santai melihat pemandangan diluar ruangan, menonton video YouTube, atau makan cemilan ;)";
+      }
       // console.log("done, rest time");
       // this.timeLimit = 5;
       // this.startTimer();
