@@ -6,6 +6,7 @@
         <span>Pomodoro</span>
       </h1>
       <button
+        @click="launchConfetti"
         class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
       >
         Login
@@ -137,6 +138,8 @@
 </template>
 
 <script>
+import confetti from "canvas-confetti";
+
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
 import check from "@/components/icons/check";
@@ -178,7 +181,7 @@ export default {
         }
       ],
       timerInterval: null,
-      timeLimit: 5,
+      timeLimit: 5, // ganti 25 * 60
       timePassed: 0,
 
       /**
@@ -251,17 +254,17 @@ export default {
   },
   methods: {
     pomoTimeSelected() {
-      this.timeLimit = 5;
+      this.timeLimit = 5; // ganti 25 * 60
       this.timeActive = "pomo";
       this.timePassed = 0;
     },
     shortRestTimeSelected() {
-      this.timeLimit = 2;
+      this.timeLimit = 2; // ganti 5 * 60
       this.timeActive = "short";
       this.timePassed = 0;
     },
     longRestTimeSelected() {
-      this.timeLimit = 3;
+      this.timeLimit = 3; // ganti 15 * 60
       this.timeActive = "long";
       this.timePassed = 0;
     },
@@ -302,6 +305,7 @@ export default {
           this.pomoCount = 0;
           this.longRestTimeSelected();
           // yay enjoy!
+          this.launchConfetti();
         }
       } else if (this.timeActive == "long") {
         this.message =
@@ -325,12 +329,47 @@ export default {
           "Ambilah minum atau regangkan kepala, pundak, dan bahu :D";
       } else if (this.timeActive == "long") {
         this.message =
-          "Saatnya untuk jalan-jalan santai melihat pemandangan diluar ruangan, menonton video YouTube, atau makan cemilan ;)";
+          "Saatnya untuk jalan-jalan santai melihat pemandangan diluar ruangan, menonton video, rebahan, atau makan cemilan ;)";
       }
       // console.log("done, rest time");
       // this.timeLimit = 5;
       // this.startTimer();
       // console.log("done, work time");
+    },
+
+    launchConfetti() {
+      if (typeof window !== "undefined") {
+        var duration = 5 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function() {
+          var timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+
+          var particleCount = 50 * (timeLeft / duration);
+          // since particles fall down, start a bit higher than random
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+            })
+          );
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+            })
+          );
+        }, 250);
+      }
     },
 
     todoComplete() {
