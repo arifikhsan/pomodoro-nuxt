@@ -3,20 +3,41 @@
     <div class="py-2 text-center border-b">
       <h1 class="text-3xl font-bold text-green-500">Pomodoro</h1>
     </div>
-    <div class="mt-8">
-      <div class="text-center">
-        <button
-          @click="start"
-          class="w-48 h-48 text-2xl font-bold tracking-wider text-white uppercase transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:from-pink-500 focus:to-red-500 hover:scale-105 focus:outline-none hover:shadow-outline"
-        >
-          <span>25:00</span><br />
-          <span>Mulai</span>
-        </button>
+    <div class="mt-8 text-center">
+      <div>
+        <p class="text-5xl font-bold text-green-500">{{ formattedTimeLeft }}</p>
       </div>
-      <div class="mt-8 text-center">
-        <h2 class="text-4xl font-bold leading-none text-green-500">
+      <div class="mt-4">
+        <h2 class="text-3xl font-bold leading-none text-green-500">
           {{ currentTodo.text }}
         </h2>
+      </div>
+      <div class="mt-8">
+        <button
+          @click="startTimer"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+        >
+          <svg
+            class="w-10 h-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
       </div>
       <div class="grid gap-4 py-8 text-center">
         <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
@@ -97,13 +118,12 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   data() {
     return {
       run: false,
-      distance: 0,
       todos: [],
       dummyTodos: [
         {
@@ -121,7 +141,10 @@ export default {
           text: "Memberi makan geri",
           done: false
         }
-      ]
+      ],
+      timerInterval: null,
+      timeLimit: 20,
+      timePassed: 0
     };
   },
   computed: {
@@ -132,26 +155,36 @@ export default {
       let currentTodos = [...this.todos];
       currentTodos.shift();
       return currentTodos;
+    },
+    timeLeft() {
+      return this.timeLimit - this.timePassed;
+    },
+    formattedTimeLeft() {
+      const timeLeft = this.timeLeft;
+      const minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      if (seconds < 10) {
+        seconds = `0${seconds}`;
+      }
+      return `${minutes}:${seconds}`;
     }
   },
   created() {
     this.todos = this.dummyTodos;
   },
+  watch: {
+    timeLeft(newValue) {
+      if (newValue === 0) {
+        this.onTimesUp();
+      }
+    }
+  },
   methods: {
-    start() {
-      // console.log("mulai");
-
-      let timeStart = new Date().getTime()
-      this.run = true
-      let timeUntil = new Date().getTime()
-      timeUntil = moment(timeUntil).add(25, 'minute').toDate().getTime()
-
-      console.log(timeStart)
-      console.log(timeUntil)
-
-      setInterval(() => {
-        this.distance = timeUntil - timeStart
-      }, 1000);
+    startTimer() {
+      this.timerInterval = setInterval(() => (this.timePassed += 1), 1000);
+    },
+    onTimesUp() {
+      clearInterval(this.timerInterval);
     }
   }
 };
