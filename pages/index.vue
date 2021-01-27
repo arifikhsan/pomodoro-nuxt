@@ -1,7 +1,10 @@
 <template>
   <div class="max-w-5xl px-4 pb-16 mx-auto">
-    <div class="py-2 text-center border-b">
+    <div class="flex items-center justify-between py-2 text-center border-b">
       <h1 class="text-3xl font-bold text-green-500">Pomodoro</h1>
+      <button class="px-4 py-2 text-sm text-white bg-green-500 rounded">
+        Sign In
+      </button>
     </div>
     <div class="mt-8 text-center">
       <div>
@@ -12,10 +15,45 @@
           {{ currentTodo.text }}
         </h2>
       </div>
-      <div class="mt-8">
+      <div class="mt-10 space-x-4">
+        <button
+          @click="pomoTimeSelected"
+          :class="[
+            timeActive === 'pomo'
+              ? 'bg-green-500 text-white'
+              : 'border border-green-500 border-dashed'
+          ]"
+          class="px-2 py-1 text-sm rounded focus:outline-none"
+        >
+          25:00
+        </button>
+        <button
+          :class="[
+            timeActive === 'short'
+              ? 'bg-green-500 text-white'
+              : 'border border-green-500 border-dashed'
+          ]"
+          @click="shortRestTimeSelected"
+          class="px-2 py-1 text-sm rounded focus:outline-none"
+        >
+          5:00
+        </button>
+        <button
+          @click="longRestTimeSelected"
+          :class="[
+            timeActive === 'long'
+              ? 'bg-green-500 text-white'
+              : 'border border-green-500 border-dashed'
+          ]"
+          class="px-2 py-1 text-sm rounded focus:outline-none"
+        >
+          15:00
+        </button>
+      </div>
+      <div class="mt-4 space-x-2">
         <button
           v-if="state == 0 || state == 2"
-          @click="startTimer"
+          @click="startPomo"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
           <play-icon />
@@ -34,9 +72,9 @@
           <check-icon />
         </button>
       </div>
-      <div class="grid gap-4 py-8 text-center">
+      <div class="grid gap-4 py-8 mt-2 text-center">
         <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
-        <div class="grid gap-4">
+        <div class="grid gap-4 mt-4">
           <div
             v-for="todo in nextTodos"
             :key="todo.id"
@@ -131,7 +169,15 @@ export default {
        * 1 = running
        * 2 = paused
        */
-      state: 0
+      state: 0,
+
+      timeActive: "pomo", // pomo, short, long
+
+      pomoDone: false,
+      shortRestDone: false,
+      longRestDone: false,
+
+      pomoCount: 0
     };
   },
   computed: {
@@ -167,6 +213,22 @@ export default {
     }
   },
   methods: {
+    pomoTimeSelected() {
+      this.timeLimit = 5;
+      this.timeActive = "pomo";
+      this.timePassed = 0;
+    },
+    shortRestTimeSelected() {
+      this.timeLimit = 3;
+      this.timeActive = "short";
+      this.timePassed = 0;
+    },
+    longRestTimeSelected() {
+      this.timeLimit = 2;
+      this.timeActive = "long";
+      this.timePassed = 0;
+    },
+
     startTimer() {
       this.state = 1;
       this.timerInterval = setInterval(() => {
@@ -184,7 +246,34 @@ export default {
     onTimesUp() {
       clearInterval(this.timerInterval);
       this.state = 0;
-      console.log("done");
+
+      if (this.timeActive == "pomo") {
+        this.pomoCount += 1;
+        console.log("done, short rest time");
+        this.shortRestTimeSelected();
+      } else if (this.timeActive == "short") {
+        if (this.pomoCount < 3) {
+          console.log("done, time to work again");
+          this.pomoTimeSelected();
+        } else {
+          console.log("done, walk");
+          this.longRestTimeSelected();
+        }
+      } else {
+        console.log("congrats");
+      }
+    },
+
+    startPomo() {
+      // start timer 25 menit
+      // start timer 5 menit
+      // stop
+
+      this.startTimer();
+      // console.log("done, rest time");
+      // this.timeLimit = 5;
+      // this.startTimer();
+      // console.log("done, work time");
     },
 
     todoComplete() {
