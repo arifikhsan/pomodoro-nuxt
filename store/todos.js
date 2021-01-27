@@ -3,17 +3,17 @@ import { v4 as uuidv4 } from "uuid";
 export const state = () => ({
   list: [
     {
-      id: 1,
+      id: uuidv4(),
       text: "Berburu ubur-ubur",
       done: false
     },
     {
-      id: 2,
+      id: uuidv4(),
       text: "Bekerja di krasti kreb",
       done: false
     },
     {
-      id: 3,
+      id: uuidv4(),
       text: "Memberi makan geri",
       done: false
     }
@@ -37,8 +37,16 @@ export const mutations = {
 };
 
 export const getters = {
-  currentTodo(state) {
-    return state.list[0];
+  activeTodos(state) {
+    return state.list.filter(todo => todo.done === false)
+  },
+  currentTodo(state, getters) {
+    return getters.activeTodos[0];
+  },
+  nextTodos(state, getters) {
+    let currentTodos = [...getters.activeTodos];
+    currentTodos.shift();
+    return currentTodos;
   },
   find(state) {
     return todoId => {

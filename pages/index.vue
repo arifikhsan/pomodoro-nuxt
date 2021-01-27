@@ -25,7 +25,7 @@
       </div>
       <div class="mt-4">
         <h2 class="text-3xl font-bold leading-none text-green-500">
-          {{ currentTodo.text }}
+          {{ currentTodo ? currentTodo.text : 'Lagi nganggur.' }}
         </h2>
       </div>
       <div class="mt-10 space-x-4">
@@ -79,7 +79,8 @@
           <pause-icon />
         </button>
         <button
-          @click="todoComplete"
+          v-if="currentTodo"
+          @click="todoDone"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
           <check-icon />
@@ -88,7 +89,11 @@
       <div class="grid gap-4 py-8 mt-2 text-center">
         <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
         <div class="grid gap-4 mt-4">
+          <div v-if="!nextTodos">
+            <p class="text-sm italic">Itu saja :)</p>
+          </div>
           <div
+            v-else
             v-for="todo in nextTodos"
             :key="todo.id"
             class="flex justify-between px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded hover:bg-green-500 hover:text-white"
@@ -96,15 +101,20 @@
             <p>
               {{ todo.text }}
             </p>
-            <div class="inline-flex items-center space-x-2">
-              <button>
-                <edit-icon />
-              </button>
-              <button>
-                <delete-icon />
+            <div class="inline-flex items-center space-x-2 group">
+              <button @click="removeTodo(todo)">
+                <delete-icon
+                  class="text-green-500 transition duration-500 hover:text-white group-hover:text-white"
+                />
               </button>
             </div>
           </div>
+          <form @submit.prevent="addTodo">
+            <input
+              v-model="newTodoText"
+              placeholder="Tambah kegiatan baru..."
+            />
+          </form>
         </div>
       </div>
       <div class="pt-8 border-t">
@@ -138,7 +148,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
 
 import play from "@/components/icons/play";
@@ -163,24 +173,6 @@ export default {
   data() {
     return {
       run: false,
-      // todos: [],
-      dummyTodos: [
-        {
-          id: 1,
-          text: "Berburu ubur-ubur",
-          done: false
-        },
-        {
-          id: 2,
-          text: "Bekerja di krasti kreb",
-          done: false
-        },
-        {
-          id: 3,
-          text: "Memberi makan geri",
-          done: false
-        }
-      ],
       timerInterval: null,
       timeLimit: 5, // ganti 25 * 60
       timePassed: 0,
@@ -199,7 +191,8 @@ export default {
       longRestDone: false,
 
       pomoCount: 0,
-      message: "Klik tombol play untuk mulai bekerja."
+      message: "Klik tombol play untuk mulai bekerja.",
+      newTodoText: ""
     };
   },
   computed: {
@@ -223,23 +216,26 @@ export default {
       }
     },
 
-    todos: {
-      get() {
-        this.$store.state.todos.list;
-      },
-      set(newTodos) {
-        return newTodos;
-      }
+    todos() {
+      this.$store.state.todos.list;
     },
+    // todos: {
+    //   get() {
+    //     this.$store.state.todos.list;
+    //   },
+    //   set(newTodos) {
+    //     return newTodos;
+    //   }
+    // },
     // currentTodo() {
     //   return this.$store.state.todos[0];
     // },
-    ...mapGetters("todos", ["currentTodo"]),
-    nextTodos() {
-      let currentTodos = [...this.$store.state.todos.list];
-      currentTodos.shift();
-      return currentTodos;
-    },
+    ...mapGetters("todos", ["currentTodo", 'nextTodos']),
+    // nextTodos() {
+    //   let currentTodos = [...this.$store.state.todos.list];
+    //   currentTodos.shift();
+    //   return currentTodos;
+    // },
     timeLeft() {
       return this.timeLimit - this.timePassed;
     },
@@ -253,9 +249,7 @@ export default {
       return `${minutes}:${seconds}`;
     }
   },
-  created() {
-    this.todos = this.dummyTodos;
-  },
+  created() {},
   watch: {
     timeLeft(newValue) {
       if (newValue === 0) {
@@ -348,6 +342,17 @@ export default {
       // console.log("done, work time");
     },
 
+    ...mapMutations({
+      toggle: "todos/toggle"
+    }),
+    addTodo() {
+      this.$store.commit("todos/add", this.newTodoText);
+      this.newTodoText = "";
+    },
+    removeTodo(todo) {
+      this.$store.commit("todos/remove", todo);
+    },
+
     launchConfetti() {
       if (typeof window !== "undefined") {
         var duration = 5 * 1000;
@@ -383,8 +388,11 @@ export default {
       }
     },
 
-    todoComplete() {
+    todoDone() {
       console.log("well todo done");
+      // console.log(this.currentTodo)
+      // console.log(this.toggle)
+      this.toggle(this.currentTodo)
     }
   }
 };
