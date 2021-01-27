@@ -138,6 +138,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 import confetti from "canvas-confetti";
 
 import play from "@/components/icons/play";
@@ -162,7 +163,7 @@ export default {
   data() {
     return {
       run: false,
-      todos: [],
+      // todos: [],
       dummyTodos: [
         {
           id: 1,
@@ -221,11 +222,21 @@ export default {
         return "Pomodoro";
       }
     },
-    currentTodo() {
-      return this.todos[0];
+
+    todos: {
+      get() {
+        this.$store.state.todos.list
+      },
+      set(newTodos) {
+        return newTodos
+      },
     },
+    // currentTodo() {
+    //   return this.$store.state.todos[0];
+    // },
+    ...mapGetters('todos', ['currentTodo']),
     nextTodos() {
-      let currentTodos = [...this.todos];
+      let currentTodos = [...this.$store.state.todos.list];
       currentTodos.shift();
       return currentTodos;
     },
@@ -240,7 +251,9 @@ export default {
         seconds = `0${seconds}`;
       }
       return `${minutes}:${seconds}`;
-    }
+    },
+
+
   },
   created() {
     this.todos = this.dummyTodos;
