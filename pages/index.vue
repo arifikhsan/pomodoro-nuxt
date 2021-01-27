@@ -89,7 +89,8 @@
       <div class="grid gap-4 py-8 mt-2 text-center">
         <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
         <div class="grid gap-4 mt-4">
-          <div v-if="!nextTodos">
+          {{ nextTodos }}
+          <div v-if="isEmpty(nextTodos)">
             <p class="text-sm italic">Itu saja :)</p>
           </div>
           <div
@@ -112,6 +113,7 @@
           <form @submit.prevent="addTodo">
             <input
               v-model="newTodoText"
+              class="px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded"
               placeholder="Tambah kegiatan baru..."
             />
           </form>
@@ -150,6 +152,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
+import { isEmpty } from 'lodash';
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
