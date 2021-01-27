@@ -36,7 +36,7 @@
               ? 'bg-green-500 text-white'
               : 'border border-green-500 border-dashed'
           ]"
-          class="px-2 py-1 text-sm rounded focus:outline-none"
+          class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
         >
           25:00
         </button>
@@ -47,7 +47,7 @@
               : 'border border-green-500 border-dashed'
           ]"
           @click="shortRestTimeSelected"
-          class="px-2 py-1 text-sm rounded focus:outline-none"
+          class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
         >
           5:00
         </button>
@@ -58,7 +58,7 @@
               ? 'bg-green-500 text-white'
               : 'border border-green-500 border-dashed'
           ]"
-          class="px-2 py-1 text-sm rounded focus:outline-none"
+          class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
         >
           15:00
         </button>
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import { mapGetters } from "vuex";
 import confetti from "canvas-confetti";
 
 import play from "@/components/icons/play";
@@ -225,16 +225,16 @@ export default {
 
     todos: {
       get() {
-        this.$store.state.todos.list
+        this.$store.state.todos.list;
       },
       set(newTodos) {
-        return newTodos
-      },
+        return newTodos;
+      }
     },
     // currentTodo() {
     //   return this.$store.state.todos[0];
     // },
-    ...mapGetters('todos', ['currentTodo']),
+    ...mapGetters("todos", ["currentTodo"]),
     nextTodos() {
       let currentTodos = [...this.$store.state.todos.list];
       currentTodos.shift();
@@ -251,9 +251,7 @@ export default {
         seconds = `0${seconds}`;
       }
       return `${minutes}:${seconds}`;
-    },
-
-
+    }
   },
   created() {
     this.todos = this.dummyTodos;
