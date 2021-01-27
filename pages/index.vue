@@ -17,26 +17,19 @@
           @click="startTimer"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
-          <svg
-            class="w-10 h-10"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1"
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-            ></path>
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1"
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+        </button>
+        <button
+          @click="stopTimer"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+        </button>
+        <button
+          @click="todoComplete"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
         </button>
       </div>
       <div class="grid gap-4 py-8 text-center">
@@ -118,7 +111,9 @@
 </template>
 
 <script>
-import moment from "moment";
+const IDLE = 0
+const RUN = 1
+const PAUSED = 2
 
 export default {
   data() {
@@ -143,8 +138,15 @@ export default {
         }
       ],
       timerInterval: null,
-      timeLimit: 20,
-      timePassed: 0
+      timeLimit: 5,
+      timePassed: 0,
+
+      /**
+       * 0 = idle
+       * 1 = running
+       * 2 = paused
+       */
+      state: IDLE
     };
   },
   computed: {
@@ -181,10 +183,27 @@ export default {
   },
   methods: {
     startTimer() {
-      this.timerInterval = setInterval(() => (this.timePassed += 1), 1000);
+      this.state = RUN
+      this.timerInterval = setInterval(() => {
+        this.timePassed += 1;
+      }, 1000);
+    },
+    pauseTimer() {
+      this.state = PAUSED
+      // this.timerInterval.
+    },
+    stopTimer() {
+      this.state = PAUSED
+      clearInterval(this.timerInterval);
     },
     onTimesUp() {
       clearInterval(this.timerInterval);
+      this.state = IDLE
+      console.log("done");
+    },
+
+    todoComplete() {
+      console.log('well todo done')
     }
   }
 };
