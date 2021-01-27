@@ -14,22 +14,24 @@
       </div>
       <div class="mt-8">
         <button
+          v-if="state == 0 || state == 2"
           @click="startTimer"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+          <play-icon />
         </button>
         <button
-          @click="stopTimer"
+          v-if="state == 1"
+          @click="pauseTimer"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+          <pause-icon />
         </button>
         <button
           @click="todoComplete"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
         >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+          <check-icon />
         </button>
       </div>
       <div class="grid gap-4 py-8 text-center">
@@ -45,43 +47,17 @@
             </p>
             <div class="inline-flex items-center space-x-2">
               <button>
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  ></path>
-                </svg>
+                <edit-icon />
               </button>
               <button>
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  ></path>
-                </svg>
+                <delete-icon />
               </button>
             </div>
           </div>
         </div>
       </div>
       <div class="pt-8 border-t">
-        <div class="prose lg:prose-xl">
+        <div class="prose text-left lg:prose-xl">
           <div>
             <h1>Cara menggunakan Pomodoro timer</h1>
             <ol>
@@ -111,11 +87,20 @@
 </template>
 
 <script>
-const IDLE = 0
-const RUN = 1
-const PAUSED = 2
+import play from "@/components/icons/play";
+import pause from "@/components/icons/pause";
+import check from "@/components/icons/check";
+import edit from "@/components/icons/edit";
+import deleteIcon from "@/components/icons/delete";
 
 export default {
+  components: {
+    "play-icon": play,
+    "pause-icon": pause,
+    "check-icon": check,
+    "edit-icon": edit,
+    "delete-icon": deleteIcon
+  },
   data() {
     return {
       run: false,
@@ -146,7 +131,7 @@ export default {
        * 1 = running
        * 2 = paused
        */
-      state: IDLE
+      state: 0
     };
   },
   computed: {
@@ -183,27 +168,27 @@ export default {
   },
   methods: {
     startTimer() {
-      this.state = RUN
+      this.state = 1;
       this.timerInterval = setInterval(() => {
         this.timePassed += 1;
       }, 1000);
     },
     pauseTimer() {
-      this.state = PAUSED
-      // this.timerInterval.
+      this.state = 2;
+      clearInterval(this.timerInterval);
     },
     stopTimer() {
-      this.state = PAUSED
+      this.state = 2;
       clearInterval(this.timerInterval);
     },
     onTimesUp() {
       clearInterval(this.timerInterval);
-      this.state = IDLE
+      this.state = 0;
       console.log("done");
     },
 
     todoComplete() {
-      console.log('well todo done')
+      console.log("well todo done");
     }
   }
 };
