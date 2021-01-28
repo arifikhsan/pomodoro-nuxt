@@ -178,7 +178,7 @@
           :class="[
             timeActive === 'pomo'
               ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
-              : 'border border-green-500 border-dashed'
+              : 'border border-teal-500 border-dashed'
           ]"
           class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
         >
@@ -188,7 +188,7 @@
           :class="[
             timeActive === 'short'
               ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
-              : 'border border-green-500 border-dashed'
+              : 'border border-teal-500 border-dashed'
           ]"
           @click="shortRestTimeSelected"
           class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
@@ -200,7 +200,7 @@
           :class="[
             timeActive === 'long'
               ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
-              : 'border border-green-500 border-dashed'
+              : 'border border-teal-500 border-dashed'
           ]"
           class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
         >
@@ -242,7 +242,7 @@
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
           <p class="inline-flex items-center text-xs italic text-gray-700">
-            Klik icon &nbsp;<briefcase-icon />&nbsp; untuk langsung dikerjakan
+            Klik icon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk langsung dikerjakan
           </p>
         </div>
         <div class="grid gap-4 mt-4">
@@ -253,7 +253,7 @@
             v-else
             v-for="todo in nextTodos"
             :key="todo.id"
-            class="flex justify-between px-4 py-2 text-green-500 transition duration-500 border border-green-400 rounded cursor-pointer hover:border-opacity-0 hover:text-white bg-gradient-to-r hover:from-teal-400 hover:to-blue-500"
+            class="flex justify-between px-4 py-2 text-teal-500 transition duration-500 border border-teal-400 rounded cursor-pointer hover:border-opacity-0 hover:text-white bg-gradient-to-r hover:from-teal-400 hover:to-blue-500"
           >
             <p>
               {{ todo.text }}
@@ -270,7 +270,7 @@
           <form @submit.prevent="addTodo">
             <input
               v-model="newTodoText"
-              class="w-full px-4 py-2 text-gray-800 transition duration-500 border border-green-400 border-dashed rounded focus:outline-none"
+              class="w-full px-4 py-2 text-gray-800 transition duration-500 border border-teal-400 border-dashed rounded focus:outline-none"
               placeholder="Tambah kegiatan baru..."
               required
             />
