@@ -9,7 +9,7 @@
         <div class="relative inline-block text-left">
           <div>
             <button
-              @click="isOpen = !isOpen"
+              @click="isMenuOpen = !isMenuOpen"
               type="button"
               class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
               id="options-menu"
@@ -34,9 +34,7 @@
             </button>
           </div>
 
-          <!--
-    Dropdown panel, show/hide based on dropdown state.
-        -->
+          <!-- Dropdown Panel -->
           <transition
             enter-active-class="transition duration-100 ease-out transform"
             enter-from-class="scale-95 opacity-0"
@@ -46,8 +44,8 @@
             leave-to-class="scale-95 opacity-0"
           >
             <div
-              v-show="isOpen"
-              @click="isOpen = !isOpen"
+              v-show="isMenuOpen"
+              @click="isMenuOpen = !isMenuOpen"
               class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
             >
               <div
@@ -71,12 +69,13 @@
                 >
                   Keluar
                 </button>
-                <a
-                  href="#"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                <button
+                  @click="getStatistic"
+                  class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
                   role="menuitem"
-                  >Statistik</a
                 >
+                  Statistik
+                </button>
                 <a
                   href="https://github.com/arifikhsan/pomodoro-nuxt"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -90,6 +89,59 @@
         </div>
       </client-only>
     </div>
+
+    <client-only>
+      <div class="relative">
+        <!-- Statistic Panel -->
+        <transition
+          enter-active-class="transition duration-100 ease-out transform"
+          enter-from-class="scale-95 opacity-0"
+          enter-to-class="scale-100 opacity-100"
+          leave-active-class="transition duration-75 ease-in transform"
+          leave-from-class="scale-100 opacity-100"
+          leave-to-class="scale-95 opacity-0"
+        >
+          <div
+            v-show="isStatisticOpen"
+            class="absolute left-0 right-0 mt-2 origin-top bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+          >
+            <div class="p-4">
+              <div class="inline-flex items-center justify-between w-full">
+                <h1 class="text-3xl font-bold leading-none text-green-500">
+                  Statistik
+                </h1>
+                <button
+                  @click="isStatisticOpen = !isStatisticOpen"
+                  class="p-2 text-red-500 rounded"
+                >
+                  <close-icon />
+                </button>
+              </div>
+              <div class="mt-4">
+                <div v-if="stats.length <= 0">
+                  <p>Loading...</p>
+                </div>
+                <div v-else class="prose lg:prose-xl">
+                  <table>
+                    <tr>
+                      <th>Nama</th>
+                      <th>Podomoro</th>
+                      <th>Kegiatan</th>
+                    </tr>
+                    <tr v-for="stat in stats" :key="stat._id">
+                      <td>{{ stat.user.name }}</td>
+                      <td>{{ stat.pomoCount }}</td>
+                      <td>{{ stat.taskCount }}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </client-only>
+
     <div v-show="message" class="my-4 text-center">
       <p
         class="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded"
@@ -249,6 +301,7 @@ import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
 import check from "@/components/icons/check";
 import edit from "@/components/icons/edit";
+import close from "@/components/icons/close";
 import deleteIcon from "@/components/icons/delete";
 import briefcase from "@/components/icons/briefcase";
 
@@ -263,12 +316,14 @@ export default {
     "pause-icon": pause,
     "check-icon": check,
     "edit-icon": edit,
+    "close-icon": close,
     "delete-icon": deleteIcon,
     "briefcase-icon": briefcase
   },
   data() {
     return {
-      isOpen: false,
+      isMenuOpen: false,
+      isStatisticOpen: false,
       run: false,
       timerInterval: null,
       timeLimit: 5, // ganti 25 * 60
@@ -290,7 +345,9 @@ export default {
       pomoCount: 0,
       message:
         "Klik tombol play untuk mulai bekerja. Masuk dengan akun google untuk menyimpan hasil ke statistik.",
-      newTodoText: ""
+      newTodoText: "",
+
+      stats: []
     };
   },
   computed: {
@@ -533,11 +590,6 @@ export default {
             taskCount: this.$fireModule.firestore.FieldValue.increment(1)
           });
       }
-      // this.$fire.firestore
-      //   .collection("users")
-      //   .doc(this.authUser.uid)
-      // .set({user: this.authUser})
-      // .set({taskCount: taskCount++})
     },
 
     async signIn() {
@@ -576,36 +628,24 @@ export default {
           console.log("gagal login");
           console.log(error);
         });
-
-      // this.$fire.auth
-      //   .signInWithPopup(provider)
-      //   .then(result => {
-      //     console.log("loggedin");
-      //     /** @type {firebase.auth.OAuthCredential} */
-      //     var credential = result.credential;
-
-      //     // This gives you a Google Access Token. You can use it to access the Google API.
-      //     var token = credential.accessToken;
-      //     // The signed-in user info.
-      //     var user = result.user;
-      //     this.$store.dispatch('onAuthStateChanged', user)
-      //     console.log(result);
-      //   })
-      //   .catch(error => {
-      //     // Handle Errors here.
-      //     var errorCode = error.code;
-      //     var errorMessage = error.message;
-      //     // The email of the user's account used.
-      //     var email = error.email;
-      //     // The firebase.auth.AuthCredential type that was used.
-      //     var credential = error.credential;
-      //     console.log(error);
-      //   });
-      // console.log(this.$fire.auth)
     },
     async signOut() {
       await this.$fire.auth.signOut();
       this.$store.dispatch("onAuthStateChanged", false);
+    },
+
+    getStatistic() {
+      let stats = [];
+      this.isStatisticOpen = !this.isStatisticOpen;
+      this.$fire.firestore
+        .collection("users")
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            stats.push(doc.data());
+          });
+          this.stats = stats;
+        });
     }
   }
 };
