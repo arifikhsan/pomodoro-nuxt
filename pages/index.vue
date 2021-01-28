@@ -242,7 +242,8 @@
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
           <p class="inline-flex items-center text-xs italic text-gray-700">
-            Klik icon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk langsung dikerjakan
+            Klik icon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk
+            langsung dikerjakan
           </p>
         </div>
         <div class="grid gap-4 mt-4">
@@ -388,6 +389,8 @@ export default {
   },
   computed: {
     title() {
+      if (!this.run)
+        return "Pomodoro timer | Manajemen waktu dengan teknik pomodoro";
       return `${this.formattedTimeLeft} | ${this.titlePomoState} | ${this.titlePomoCount}`;
     },
     titlePomoState() {
@@ -484,7 +487,7 @@ export default {
         this.message =
           "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
         this.shortRestTimeSelected();
-        this.launchFireworksConfetti();
+        this.launchRealisticConfetti();
         if (this.isLoggedIn) {
           this.$fire.firestore
             .collection("users")
@@ -505,7 +508,7 @@ export default {
           this.pomoCount = 0;
           this.longRestTimeSelected();
           // yay enjoy!
-          this.launchBigConfetti();
+          this.launchFireworksConfetti();
         }
       } else if (this.timeActive == "long") {
         this.message =
@@ -520,6 +523,7 @@ export default {
     },
 
     startPomo() {
+      this.run = true;
       this.startTimer();
       if (this.timeActive == "pomo") {
         this.message = "Selamat bekerja :)";
@@ -582,38 +586,43 @@ export default {
         origin: { y: 0.6 }
       });
     },
-    launchBigConfetti() {
+    launchRealisticConfetti() {
       if (!process.server) {
-        var duration = 5 * 1000;
-        var animationEnd = Date.now() + duration;
-        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        var count = 400;
+        var defaults = {
+          origin: { y: 0.7 }
+        };
 
-        function randomInRange(min, max) {
-          return Math.random() * (max - min) + min;
+        function fire(particleRatio, opts) {
+          confetti(
+            Object.assign({}, defaults, opts, {
+              particleCount: Math.floor(count * particleRatio)
+            })
+          );
         }
 
-        var interval = setInterval(function() {
-          var timeLeft = animationEnd - Date.now();
-
-          if (timeLeft <= 0) {
-            return clearInterval(interval);
-          }
-
-          var particleCount = 50 * (timeLeft / duration);
-          // since particles fall down, start a bit higher than random
-          confetti(
-            Object.assign({}, defaults, {
-              particleCount,
-              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-            })
-          );
-          confetti(
-            Object.assign({}, defaults, {
-              particleCount,
-              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-            })
-          );
-        }, 250);
+        fire(0.25, {
+          spread: 26,
+          startVelocity: 55
+        });
+        fire(0.2, {
+          spread: 60
+        });
+        fire(0.35, {
+          spread: 100,
+          decay: 0.91,
+          scalar: 0.8
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 25,
+          decay: 0.92,
+          scalar: 1.2
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 45
+        });
       }
     },
 
