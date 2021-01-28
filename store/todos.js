@@ -1,23 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 export const state = () => ({
-  list: [
-    {
-      id: uuidv4(),
-      text: "Berburu ubur-ubur",
-      done: false
-    },
-    {
-      id: uuidv4(),
-      text: "Bekerja di krasti kreb",
-      done: false
-    },
-    {
-      id: uuidv4(),
-      text: "Memberi makan geri",
-      done: false
-    }
-  ]
+  list: []
 });
 
 export const mutations = {
@@ -37,7 +21,7 @@ export const mutations = {
   moveToFirst(state, todo) {
     state.list.splice(state.list.indexOf(todo), 1);
     state.list.unshift(todo);
-  },
+  }
   // setActive(state, todo) {
   //   state.list.splice(state.list.indexOf(todo), 1);
   //   state.list.push({
