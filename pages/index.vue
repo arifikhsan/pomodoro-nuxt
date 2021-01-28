@@ -212,7 +212,7 @@
           v-show="currentTodo"
           v-if="state == 0 || state == 2"
           @click="startPomo"
-          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow hover:scale-95 bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
         >
           <play-icon />
         </button>
@@ -241,7 +241,7 @@
       <div class="grid gap-4 py-8 mt-2 text-center">
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
-          <p class="inline-flex items-center text-xs italic text-gray-700">
+          <p class="inline-flex items-center mt-2 text-xs italic text-gray-700">
             Klik icon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk
             langsung dikerjakan
           </p>
@@ -275,7 +275,7 @@
               placeholder="Tambah kegiatan baru..."
               required
             />
-            <span class="text-sm italic text-gray-700"
+            <span class="mt-2 text-sm italic text-gray-700"
               >Tekan "Enter" untuk menambahkan kegiatan.</span
             >
           </form>
@@ -284,21 +284,32 @@
       <div class="pt-8 border-t">
         <div class="prose text-left">
           <div>
-            <h1>Apa ini?</h1>
+            <h1>Latar Belakang</h1>
             <p>
-              Exercitation voluptate quis duis nisi anim sit esse ut do Lorem
-              esse. Minim reprehenderit in eu anim consequat excepteur magna est
-              enim fugiat. Magna aliqua amet voluptate est eiusmod enim sint
-              sunt. Consequat id nulla tempor amet sunt aute anim.
+              Disaat kita memiliki pekerjaan yang membutuhkan waktu lama,
+              rasanya pekerjaan itu tidak pernah ada selesainya. Meskipun sudah
+              didepan komputer siang dan malam.
+            </p>
+            <p>
+              Hal ini membuat pekerjaan menjadi sangat melelahkan. Karena kita
+              tidak pernah tahu kapan akan selesai.
             </p>
           </div>
           <div>
-            <h1>Untuk apa?</h1>
+            <h1>Fungsi</h1>
             <p>
-              Exercitation voluptate quis duis nisi anim sit esse ut do Lorem
-              esse. Minim reprehenderit in eu anim consequat excepteur magna est
-              enim fugiat. Magna aliqua amet voluptate est eiusmod enim sint
-              sunt. Consequat id nulla tempor amet sunt aute anim.
+              Teknik Pomodoro adalah sistem manajemen waktu yang mendorong kita
+              untuk bekerja sesuai dengan waktu yang kita miliki.
+            </p>
+            <p>
+              Caranya adalah dengan membagi waktu kerja menjadi 25 menit untuk
+              bekerja dan 5 menit untuk istirahat. Gabungan waktu ini disebut
+              sebagai 1 pomodoro. Setelah 3 atau 4 pomodoro, ada waktu istirahat
+              panjang selama 15 sampai 25 menit.
+            </p>
+            <p>
+              Daripada menghabiskan waktu berjam-jam untuk bekerja tanpa henti,
+              teknik pomodoro akan mengingatkan kita untuk istirahat sejenak.
             </p>
           </div>
           <div>
@@ -363,7 +374,7 @@ export default {
       isStatisticOpen: false,
       run: false,
       timerInterval: null,
-      timeLimit: 5, // ganti 25 * 60
+      timeLimit: 10, // ganti 25 * 60
       timePassed: 0,
 
       /**
@@ -445,17 +456,17 @@ export default {
   },
   methods: {
     pomoTimeSelected() {
-      this.timeLimit = 5; // ganti 25 * 60
+      this.timeLimit = 10; // ganti 25 * 60
       this.timeActive = "pomo";
       this.timePassed = 0;
     },
     shortRestTimeSelected() {
-      this.timeLimit = 2; // ganti 5 * 60
+      this.timeLimit = 6; // ganti 5 * 60
       this.timeActive = "short";
       this.timePassed = 0;
     },
     longRestTimeSelected() {
-      this.timeLimit = 3; // ganti 15 * 60
+      this.timeLimit = 8; // ganti 15 * 60
       this.timeActive = "long";
       this.timePassed = 0;
     },
@@ -482,12 +493,17 @@ export default {
       this.state = 0;
 
       if (this.timeActive == "pomo") {
-        this.pomoCount += 1;
+
         console.log("done, short rest time");
         this.message =
           "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
         this.shortRestTimeSelected();
         this.launchRealisticConfetti();
+
+        this.startTimer();
+      } else if (this.timeActive == "short") {
+        // increment pomo
+        this.pomoCount += 1;
         if (this.isLoggedIn) {
           this.$fire.firestore
             .collection("users")
@@ -496,7 +512,7 @@ export default {
               pomoCount: this.$fireModule.firestore.FieldValue.increment(1)
             });
         }
-      } else if (this.timeActive == "short") {
+
         if (this.pomoCount < 3) {
           console.log("done, time to work again");
           this.message = "Waktu istirahat selesai. Ayo bekerja lagi :D";
