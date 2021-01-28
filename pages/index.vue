@@ -325,8 +325,14 @@
           <div>
             <h1>Fitur</h1>
             <ul>
-              <li>Waktu bisa dijeda (pause), dilanjutkan (resume), dan dihentikan (mulai dari awal).</li>
-              <li>Bisa memilih waktu sendiri dengan fleksibel. 25, 5, atau 15 menit.</li>
+              <li>
+                Waktu bisa dijeda (pause), dilanjutkan (resume), dan dihentikan
+                (mulai dari awal).
+              </li>
+              <li>
+                Bisa memilih waktu sendiri dengan fleksibel. 25, 5, atau 15
+                menit.
+              </li>
               <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
               <li>Notifikasi audio.</li>
@@ -357,7 +363,15 @@ import alarm from "@/assets/audio/alarm.mp3";
 export default {
   head() {
     return {
-      title: this.title
+      title: this.title,
+      meta: [
+        // hid is used as unique identifier. Do not use `vmid` for it as it will not work
+        {
+          hid: "dicoding:email",
+          name: "dicoding:email",
+          content: "arif.ikhsanudin.id@gmail.com"
+        }
+      ]
     };
   },
   components: {
@@ -495,7 +509,6 @@ export default {
       this.state = 0;
 
       if (this.timeActive == "pomo") {
-
         console.log("done, short rest time");
         this.message =
           "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
