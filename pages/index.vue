@@ -325,7 +325,8 @@
           <div>
             <h1>Fitur</h1>
             <ul>
-              <li>Bisa memilih waktu sendiri dengan fleksibel.</li>
+              <li>Waktu bisa dijeda (pause), dilanjutkan (resume), dan dihentikan (mulai dari awal).</li>
+              <li>Bisa memilih waktu sendiri dengan fleksibel. 25, 5, atau 15 menit.</li>
               <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
               <li>Notifikasi audio.</li>
