@@ -141,7 +141,7 @@
           15:00
         </button>
       </div>
-      <div class="mt-6 space-x-2">
+      <div class="mt-8 space-x-2">
         <button
           v-show="currentTodo"
           v-if="state == 0 || state == 2"
@@ -167,7 +167,6 @@
       </div>
       <div class="grid gap-4 py-8 mt-2 text-center">
         <div>
-          {{ isLoggedIn }}
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
           <p class="inline-flex items-center text-xs italic text-gray-700">
             Klik icon &nbsp;<briefcase-icon />&nbsp; untuk langsung dikerjakan
