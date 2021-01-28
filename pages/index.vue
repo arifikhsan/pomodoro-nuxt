@@ -335,6 +335,7 @@
               </li>
               <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
+              <li>Warna gradasi yang bagus.</li>
               <li>Notifikasi audio.</li>
               <li>Statistik.</li>
             </ul>
