@@ -47,6 +47,7 @@
           >
             <div
               v-show="isOpen"
+              @click="isOpen = !isOpen"
               class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
             >
               <div
@@ -289,7 +290,7 @@ export default {
 
       pomoCount: 0,
       message:
-        "Klik tombol play untuk mulai bekerja. Masuk dengan akun google untuk menyimpan hasil podomoro.",
+        "Klik tombol play untuk mulai bekerja. Masuk dengan akun google untuk menyimpan hasil ke statistik.",
       newTodoText: ""
     };
   },
