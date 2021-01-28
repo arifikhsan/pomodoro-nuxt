@@ -390,7 +390,7 @@ export default {
       isStatisticOpen: false,
       run: false,
       timerInterval: null,
-      timeLimit: 10, // ganti 25 * 60
+      timeLimit: 25 * 60, // ganti 25 * 60
       timePassed: 0,
 
       /**
@@ -472,17 +472,17 @@ export default {
   },
   methods: {
     pomoTimeSelected() {
-      this.timeLimit = 10; // ganti 25 * 60
+      this.timeLimit = 25 * 60; // ganti 25 * 60
       this.timeActive = "pomo";
       this.timePassed = 0;
     },
     shortRestTimeSelected() {
-      this.timeLimit = 6; // ganti 5 * 60
+      this.timeLimit = 5 * 60; // ganti 5 * 60
       this.timeActive = "short";
       this.timePassed = 0;
     },
     longRestTimeSelected() {
-      this.timeLimit = 8; // ganti 15 * 60
+      this.timeLimit = 15 * 60; // ganti 15 * 60
       this.timeActive = "long";
       this.timePassed = 0;
     },
