@@ -12,7 +12,81 @@
       >
         Login
       </button>
-      <button v-else @click="signOut">SignOut</button>
+      <client-only v-else>
+        <div class="relative inline-block text-left">
+          <div>
+            <button
+              @click="isOpen = !isOpen"
+              type="button"
+              class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+              id="options-menu"
+              aria-haspopup="true"
+              aria-expanded="true"
+            >
+              Pilihan
+              <!-- Heroicon name: chevron-down -->
+              <svg
+                class="w-5 h-5 ml-2 -mr-1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!--
+    Dropdown panel, show/hide based on dropdown state.
+        -->
+          <transition
+            enter-active-class="transition duration-100 ease-out transform"
+            enter-from-class="scale-95 opacity-0"
+            enter-to-class="scale-100 opacity-100"
+            leave-active-class="transition duration-75 ease-in transform"
+            leave-from-class="scale-100 opacity-100"
+            leave-to-class="scale-95 opacity-0"
+          >
+            <div
+              v-show="isOpen"
+              class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+            >
+              <div
+                class="py-1"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="options-menu"
+              >
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  >Statistik</a
+                >
+                <a
+                  href="https://github.com/arifikhsan/pomodoro-nuxt"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  role="menuitem"
+                  target="_blank"
+                  >Kode Sumber</a
+                >
+                <button
+                  @click="signOut"
+                  class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                  role="menuitem"
+                >
+                  Keluar
+                </button>
+              </div>
+            </div>
+          </transition>
+        </div>
+      </client-only>
     </div>
     <div v-show="message" class="my-4 text-center">
       <p
@@ -125,7 +199,7 @@
           <form @submit.prevent="addTodo">
             <input
               v-model="newTodoText"
-              class="w-full px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded"
+              class="w-full px-4 py-2 text-gray-800 transition duration-500 border border-green-400 border-dashed rounded focus:outline-none"
               placeholder="Tambah kegiatan baru..."
               required
             />
@@ -168,7 +242,6 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
-// import firebase from "firebase";
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
@@ -193,6 +266,7 @@ export default {
   },
   data() {
     return {
+      isOpen: false,
       run: false,
       timerInterval: null,
       timeLimit: 5, // ganti 25 * 60
@@ -257,12 +331,15 @@ export default {
       return this.$store.getters.isLoggedIn;
     },
     authUser() {
-      return this.$store.state.authUser;
+      return this.$store.getters.authUser;
     }
   },
   created() {
     // console.log(this.$fire.auth.currentUser)
-    // console.log(this.$fire.auth)
+    console.log(this.isLoggedIn);
+    if (this.isLoggedIn && this.unfinishedTodos.length > 0) {
+      this.backupLocalTodoToFirestore();
+    }
   },
   watch: {
     timeLeft(newValue) {
@@ -312,6 +389,13 @@ export default {
         this.message =
           "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
         this.shortRestTimeSelected();
+        this.launchFireworksConfetti();
+        this.$fire.firestore
+          .collection("users")
+          .doc(this.authUser.uid)
+          .update({
+            pomoCount: this.$fireModule.firestore.FieldValue.increment(1)
+          });
       } else if (this.timeActive == "short") {
         if (this.pomoCount < 3) {
           console.log("done, time to work again");
@@ -359,6 +443,38 @@ export default {
       this.$store.commit("todos/remove", todo);
     },
 
+    launchFireworksConfetti() {
+      var duration = 5 * 1000;
+      var animationEnd = Date.now() + duration;
+      var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      var interval = setInterval(function() {
+        var timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        var particleCount = 50 * (timeLeft / duration);
+        // since particles fall down, start a bit higher than random
+        confetti(
+          Object.assign({}, defaults, {
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+          })
+        );
+        confetti(
+          Object.assign({}, defaults, {
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+          })
+        );
+      }, 250);
+    },
     launchSmallConfetti() {
       confetti({
         particleCount: 100,
@@ -404,16 +520,47 @@ export default {
     todoSetActive(todo) {
       this.$store.commit("todos/moveToFirst", todo);
     },
-    todoDone() {
+    async todoDone() {
       console.log("well todo done");
       this.launchSmallConfetti();
-      this.removeTodo(this.currentTodo);
+      this.$fire.firestore
+        .collection("users")
+        .doc(this.authUser.uid)
+        .update({
+          taskCount: this.$fireModule.firestore.FieldValue.increment(1)
+        });
+      // this.$fire.firestore
+      //   .collection("users")
+      //   .doc(this.authUser.uid)
+      // .set({user: this.authUser})
+      // .set({taskCount: taskCount++})
+      // this.removeTodo(this.currentTodo);
     },
 
     async signIn() {
       let provider = new this.$fireModule.auth.GoogleAuthProvider();
       let result = await this.$fire.auth.signInWithPopup(provider);
       this.$store.dispatch("onAuthStateChanged", result.user);
+
+      // if user not exists, create
+      let userRef = this.$fire.firestore
+        .collection("users")
+        .doc(result.user.uid);
+
+      userRef.get().then(docSnapshot => {
+        if (!docSnapshot.exists) {
+          userRef.set({
+            pomoCount: 0,
+            taskCount: 0,
+            user: {
+              uid: result.user.uid,
+              email: result.user.email,
+              name: result.user.displayName
+            }
+          });
+        }
+      });
+
       console.log("loggedin");
 
       // this.$fire.auth
@@ -445,6 +592,13 @@ export default {
     async signOut() {
       await this.$fire.auth.signOut();
       this.$store.dispatch("onAuthStateChanged", false);
+    },
+
+    backupLocalTodoToFirestore() {
+      console.log("backup");
+      console.log(this.$fire);
+      // console.log(this.$fire.firestore)
+      // this.$fire.firestore.collection("users").add({ pomo: 2 });
     }
   }
 };

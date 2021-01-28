@@ -5,5 +5,8 @@ export default {
     } catch {
       return false;
     }
+  },
+  authUser(state) {
+    return state.authUser
   }
 };
