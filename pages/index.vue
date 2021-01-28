@@ -169,7 +169,7 @@
         <h2
           class="py-3 text-3xl font-bold leading-none text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
         >
-          {{ currentTodo ? currentTodo.text : "Lagi nganggur." }}
+          {{ currentTodo ? currentTodo.text : "Buat kegiatan baru! :)" }}
         </h2>
       </div>
       <div class="mt-10 space-x-4">
