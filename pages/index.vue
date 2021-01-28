@@ -302,6 +302,8 @@ import close from "@/components/icons/close";
 import deleteIcon from "@/components/icons/delete";
 import briefcase from "@/components/icons/briefcase";
 
+import alarm from '@/assets/audio/alarm.mp3'
+
 export default {
   head() {
     return {
@@ -472,6 +474,9 @@ export default {
       } else {
         console.log("congrats");
       }
+
+      let audio = new Audio(alarm)
+      audio.play()
     },
 
     startPomo() {
