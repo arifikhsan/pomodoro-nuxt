@@ -129,8 +129,8 @@
                 <div v-if="stats.length <= 0">
                   <p>Loading...</p>
                 </div>
-                <div v-else class="prose">
-                  <table>
+                <div v-else class="text-sm text-center">
+                  <table class="table-auto">
                     <tr>
                       <th>Nama</th>
                       <th>Podomoro</th>
@@ -325,6 +325,7 @@
           <div>
             <h1>Fitur</h1>
             <ul>
+              <li>Bisa memilih waktu sendiri dengan fleksibel.</li>
               <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
               <li>Notifikasi audio.</li>
