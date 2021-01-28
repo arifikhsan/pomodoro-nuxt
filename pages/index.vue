@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl px-4 pb-16 mx-auto">
+  <div class="max-w-xl px-4 pb-16 mx-auto">
     <div class="flex items-center justify-between py-2 text-center border-b">
       <h1 class="text-3xl font-bold text-green-500">
         <span v-show="pomoCount > 0">{{ pomoCount }}</span>
@@ -121,7 +121,7 @@
                 <div v-if="stats.length <= 0">
                   <p>Loading...</p>
                 </div>
-                <div v-else class="prose lg:prose-xl">
+                <div v-else class="prose">
                   <table>
                     <tr>
                       <th>Nama</th>
@@ -264,9 +264,9 @@
         </div>
       </div>
       <div class="pt-8 border-t">
-        <div class="prose text-left lg:prose-xl">
+        <div class="prose text-left">
           <div>
-            <h1>Cara menggunakan Pomodoro timer</h1>
+            <h1>Cara menggunakan timer Pomodoro</h1>
             <ol>
               <li>Tambahkan kegiatan baru.</li>
               <li>Pilih kegiatan yang mau dikerjakan.</li>
@@ -278,13 +278,10 @@
           <div>
             <h1>Fitur</h1>
             <ul>
-              <li>Desain responsif untuk layar desktop dan hp.</li>
+              <li>Animasi saat berhasil menyelesaikan kegiatan.</li>
+              <li>Authentikasi mengguankan akun Google.</li>
               <li>Notifikasi audio.</li>
-              <li>
-                (Segera datang) Transisi warna untuk menyesuaikan mood ketika
-                bekerja dan istirahat.
-              </li>
-              <li>(Segera datang) Statistik.</li>
+              <li>Statistik.</li>
             </ul>
           </div>
         </div>
@@ -639,6 +636,9 @@ export default {
       this.isStatisticOpen = !this.isStatisticOpen;
       this.$fire.firestore
         .collection("users")
+        .orderBy("pomoCount", "desc")
+        .orderBy("taskCount", "desc")
+        .limit(10)
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
