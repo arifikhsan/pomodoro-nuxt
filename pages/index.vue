@@ -313,19 +313,19 @@
             </p>
           </div>
           <div>
-            <h1>Bagaimana caranya?</h1>
+            <h1>Cara menggunakan</h1>
             <ol>
-              <li>Tambahkan kegiatan baru.</li>
+              <li>Tulis dan tambahkan kegiatan baru.</li>
               <li>Pilih kegiatan yang mau dikerjakan.</li>
               <li>Mulai timer kemudian fokus selama 25 menit.</li>
-              <li>Istirahat selama 5 menit ketika alarm berbunyi.</li>
-              <li>Ulangi 3-5 kali sampai kegiatan tersebut selesai.</li>
+              <li>Istirahat selama 5 menit.</li>
+              <li>Ulangi 3-4 kali sampai kegiatan tersebut selesai.</li>
             </ol>
           </div>
           <div>
             <h1>Fitur</h1>
             <ul>
-              <li>Animasi saat berhasil menyelesaikan kegiatan.</li>
+              <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
               <li>Notifikasi audio.</li>
               <li>Statistik.</li>
