@@ -6,11 +6,13 @@
         <span>Pomodoro</span>
       </h1>
       <button
+        v-if="!isLoggedIn"
         @click="signIn"
         class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
       >
         Login
       </button>
+      <button v-else @click="signOut">SignOut</button>
     </div>
     <div v-show="message" class="my-4 text-center">
       <p
@@ -90,8 +92,8 @@
       <div class="grid gap-4 py-8 mt-2 text-center">
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
-          <p class="text-xs italic text-gray-700">
-            Klik kegiatan untuk dikerjakan
+          <p class="inline-flex items-center text-xs italic text-gray-700">
+            Klik icon &nbsp;<briefcase-icon />&nbsp; untuk langsung dikerjakan
           </p>
         </div>
         <div class="grid gap-4 mt-4">
@@ -166,7 +168,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
-import firebase from "firebase";
+// import firebase from "firebase";
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
@@ -250,9 +252,18 @@ export default {
         seconds = `0${seconds}`;
       }
       return `${minutes}:${seconds}`;
+    },
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    authUser() {
+      return this.$store.state.authUser;
     }
   },
-  created() {},
+  created() {
+    // console.log(this.$fire.auth.currentUser)
+    // console.log(this.$fire.auth)
+  },
   watch: {
     timeLeft(newValue) {
       if (newValue === 0) {
@@ -399,33 +410,41 @@ export default {
       this.removeTodo(this.currentTodo);
     },
 
-    signIn() {
-      let provider = new firebase.auth.GoogleAuthProvider();
-      this.$fire.auth
-        .signInWithPopup(provider)
-        .then(result => {
-          console.log("loggedin");
-          /** @type {firebase.auth.OAuthCredential} */
-          var credential = result.credential;
+    async signIn() {
+      let provider = new this.$fireModule.auth.GoogleAuthProvider();
+      let result = await this.$fire.auth.signInWithPopup(provider);
+      this.$store.dispatch("onAuthStateChanged", result.user);
+      console.log("loggedin");
 
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = credential.accessToken;
-          // The signed-in user info.
-          var user = result.user;
-          console.log(result);
-        })
-        .catch(error => {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // The email of the user's account used.
-          var email = error.email;
-          // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential;
-          console.log(e);
-        });
+      // this.$fire.auth
+      //   .signInWithPopup(provider)
+      //   .then(result => {
+      //     console.log("loggedin");
+      //     /** @type {firebase.auth.OAuthCredential} */
+      //     var credential = result.credential;
+
+      //     // This gives you a Google Access Token. You can use it to access the Google API.
+      //     var token = credential.accessToken;
+      //     // The signed-in user info.
+      //     var user = result.user;
+      //     this.$store.dispatch('onAuthStateChanged', user)
+      //     console.log(result);
+      //   })
+      //   .catch(error => {
+      //     // Handle Errors here.
+      //     var errorCode = error.code;
+      //     var errorMessage = error.message;
+      //     // The email of the user's account used.
+      //     var email = error.email;
+      //     // The firebase.auth.AuthCredential type that was used.
+      //     var credential = error.credential;
+      //     console.log(error);
+      //   });
       // console.log(this.$fire.auth)
-      // await this.$fire.auth.
+    },
+    async signOut() {
+      await this.$fire.auth.signOut();
+      this.$store.dispatch("onAuthStateChanged", false);
     }
   }
 };
