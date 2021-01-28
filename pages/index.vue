@@ -61,7 +61,7 @@
                 <button
                   v-if="!isLoggedIn"
                   @click="signIn"
-                  class="block w-full px-4 py-2 text-sm text-left text-green-500 hover:bg-green-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                  class="block w-full px-4 py-2 text-sm text-left text-teal-500 hover:bg-green-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
                 >
                   Masuk
                 </button>
@@ -167,7 +167,7 @@
       </div>
       <div class="mt-4">
         <h2
-          class="text-3xl font-bold leading-none text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+          class="py-3 text-3xl font-bold leading-none text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
         >
           {{ currentTodo ? currentTodo.text : "Lagi nganggur." }}
         </h2>
