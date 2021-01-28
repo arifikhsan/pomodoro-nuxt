@@ -1,12 +1,8 @@
 export default {
-  isLoggedIn: state => {
-    try {
-      return state.authUser.uid !== null;
-    } catch {
-      return false;
-    }
+  isLoggedIn(state) {
+    return !!state.authUser;
   },
   authUser(state) {
-    return state.authUser
+    return state.authUser;
   }
 };

@@ -5,14 +5,7 @@
         <span v-show="pomoCount > 0">{{ pomoCount }}</span>
         <span>Pomodoro</span>
       </h1>
-      <button
-        v-if="!isLoggedIn"
-        @click="signIn"
-        class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
-      >
-        Login
-      </button>
-      <client-only v-else>
+      <client-only>
         <div class="relative inline-block text-left">
           <div>
             <button
@@ -23,7 +16,7 @@
               aria-haspopup="true"
               aria-expanded="true"
             >
-              Pilihan
+              Menu
               <!-- Heroicon name: chevron-down -->
               <svg
                 class="w-5 h-5 ml-2 -mr-1"
@@ -62,6 +55,21 @@
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
+                <button
+                  v-if="!isLoggedIn"
+                  @click="signIn"
+                  class="block w-full px-4 py-2 text-sm text-left text-green-500 hover:bg-green-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                >
+                  Masuk
+                </button>
+                <button
+                  v-if="isLoggedIn"
+                  @click="signOut"
+                  class="block w-full px-4 py-2 text-sm text-left text-red-500 hover:bg-red-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                  role="menuitem"
+                >
+                  Keluar
+                </button>
                 <a
                   href="#"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -75,13 +83,6 @@
                   target="_blank"
                   >Kode Sumber</a
                 >
-                <button
-                  @click="signOut"
-                  class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-                  role="menuitem"
-                >
-                  Keluar
-                </button>
               </div>
             </div>
           </transition>
@@ -165,6 +166,7 @@
       </div>
       <div class="grid gap-4 py-8 mt-2 text-center">
         <div>
+          {{ isLoggedIn }}
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
           <p class="inline-flex items-center text-xs italic text-gray-700">
             Klik icon &nbsp;<briefcase-icon />&nbsp; untuk langsung dikerjakan
@@ -204,7 +206,7 @@
               required
             />
             <span class="text-sm italic text-gray-700"
-              >Tekan "Enter" untuk menambahkan kegiatan</span
+              >Tekan "Enter" untuk menambahkan kegiatan.</span
             >
           </form>
         </div>
@@ -286,7 +288,8 @@ export default {
       longRestDone: false,
 
       pomoCount: 0,
-      message: "Klik tombol play untuk mulai bekerja.",
+      message:
+        "Klik tombol play untuk mulai bekerja. Masuk dengan akun google untuk menyimpan hasil podomoro.",
       newTodoText: ""
     };
   },
@@ -336,10 +339,6 @@ export default {
   },
   created() {
     // console.log(this.$fire.auth.currentUser)
-    console.log(this.isLoggedIn);
-    if (this.isLoggedIn && this.unfinishedTodos.length > 0) {
-      this.backupLocalTodoToFirestore();
-    }
   },
   watch: {
     timeLeft(newValue) {
@@ -390,12 +389,14 @@ export default {
           "Waktu kerja selesai, saatnya untuk istirahat pendek selama 5 menit.";
         this.shortRestTimeSelected();
         this.launchFireworksConfetti();
-        this.$fire.firestore
-          .collection("users")
-          .doc(this.authUser.uid)
-          .update({
-            pomoCount: this.$fireModule.firestore.FieldValue.increment(1)
-          });
+        if (this.isLoggedIn) {
+          this.$fire.firestore
+            .collection("users")
+            .doc(this.authUser.uid)
+            .update({
+              pomoCount: this.$fireModule.firestore.FieldValue.increment(1)
+            });
+        }
       } else if (this.timeActive == "short") {
         if (this.pomoCount < 3) {
           console.log("done, time to work again");
@@ -483,7 +484,7 @@ export default {
       });
     },
     launchBigConfetti() {
-      if (typeof window !== "undefined") {
+      if (!process.server) {
         var duration = 5 * 1000;
         var animationEnd = Date.now() + duration;
         var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -523,45 +524,58 @@ export default {
     async todoDone() {
       console.log("well todo done");
       this.launchSmallConfetti();
-      this.$fire.firestore
-        .collection("users")
-        .doc(this.authUser.uid)
-        .update({
-          taskCount: this.$fireModule.firestore.FieldValue.increment(1)
-        });
+      this.removeTodo(this.currentTodo);
+      if (this.isLoggedIn) {
+        this.$fire.firestore
+          .collection("users")
+          .doc(this.authUser.uid)
+          .update({
+            taskCount: this.$fireModule.firestore.FieldValue.increment(1)
+          });
+      }
       // this.$fire.firestore
       //   .collection("users")
       //   .doc(this.authUser.uid)
       // .set({user: this.authUser})
       // .set({taskCount: taskCount++})
-      // this.removeTodo(this.currentTodo);
     },
 
     async signIn() {
       let provider = new this.$fireModule.auth.GoogleAuthProvider();
-      let result = await this.$fire.auth.signInWithPopup(provider);
-      this.$store.dispatch("onAuthStateChanged", result.user);
 
-      // if user not exists, create
-      let userRef = this.$fire.firestore
-        .collection("users")
-        .doc(result.user.uid);
+      this.$fire.auth
+        .signInWithPopup(provider)
+        .then(result => {
+          console.log(result);
+          console.log(result.user);
 
-      userRef.get().then(docSnapshot => {
-        if (!docSnapshot.exists) {
-          userRef.set({
-            pomoCount: 0,
-            taskCount: 0,
-            user: {
-              uid: result.user.uid,
-              email: result.user.email,
-              name: result.user.displayName
+          this.$store.dispatch("onAuthStateChanged", { authUser: result.user });
+
+          // if user not exists, create
+          let userRef = this.$fire.firestore
+            .collection("users")
+            .doc(result.user.uid);
+
+          userRef.get().then(docSnapshot => {
+            if (!docSnapshot.exists) {
+              userRef.set({
+                pomoCount: 0,
+                taskCount: 0,
+                user: {
+                  uid: result.user.uid,
+                  email: result.user.email,
+                  name: result.user.displayName
+                }
+              });
             }
           });
-        }
-      });
 
-      console.log("loggedin");
+          console.log("loggedin");
+        })
+        .catch(error => {
+          console.log("gagal login");
+          console.log(error);
+        });
 
       // this.$fire.auth
       //   .signInWithPopup(provider)
@@ -592,13 +606,6 @@ export default {
     async signOut() {
       await this.$fire.auth.signOut();
       this.$store.dispatch("onAuthStateChanged", false);
-    },
-
-    backupLocalTodoToFirestore() {
-      console.log("backup");
-      console.log(this.$fire);
-      // console.log(this.$fire.firestore)
-      // this.$fire.firestore.collection("users").add({ pomo: 2 });
     }
   }
 };

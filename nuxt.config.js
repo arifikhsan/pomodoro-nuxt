@@ -47,6 +47,9 @@ export default {
      */
     extend(config, ctx) {}
   },
+  /*
+   ** Firebase config
+   */
   firebase: {
     config: {
       apiKey: "AIzaSyB7QOBjjxpnW0ka6tokH_6CDL_m5gbrKV4",
@@ -66,6 +69,9 @@ export default {
       }
     }
   },
+  /*
+   ** Progressive Web Application
+   */
   pwa: {
     // disable the modules you don't need
     meta: false,
