@@ -428,6 +428,7 @@ export default {
     },
     pauseTimer() {
       this.state = 2;
+      this.message = 'Pomodoro dihentikan sebentar.'
       clearInterval(this.timerInterval);
     },
     stopTimer() {
