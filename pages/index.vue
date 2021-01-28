@@ -6,7 +6,7 @@
         <span>Pomodoro</span>
       </h1>
       <button
-        @click="launchBigConfetti"
+        @click="signIn"
         class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
       >
         Login
@@ -166,7 +166,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
-import { isEmpty } from "lodash";
+import firebase from "firebase";
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
@@ -238,23 +238,7 @@ export default {
     todos() {
       this.$store.state.todos.list;
     },
-    // todos: {
-    //   get() {
-    //     this.$store.state.todos.list;
-    //   },
-    //   set(newTodos) {
-    //     return newTodos;
-    //   }
-    // },
-    // currentTodo() {
-    //   return this.$store.state.todos[0];
-    // },
     ...mapGetters("todos", ["currentTodo", "nextTodos", "unfinishedTodos"]),
-    // nextTodos() {
-    //   let currentTodos = [...this.$store.state.todos.list];
-    //   currentTodos.shift();
-    //   return currentTodos;
-    // },
     timeLeft() {
       return this.timeLimit - this.timePassed;
     },
@@ -341,10 +325,6 @@ export default {
     },
 
     startPomo() {
-      // start timer 25 menit
-      // start timer 5 menit
-      // stop
-
       this.startTimer();
       if (this.timeActive == "pomo") {
         this.message = "Selamat bekerja :)";
@@ -355,10 +335,6 @@ export default {
         this.message =
           "Saatnya untuk jalan-jalan santai melihat pemandangan diluar ruangan, menonton video, rebahan, atau makan cemilan ;)";
       }
-      // console.log("done, rest time");
-      // this.timeLimit = 5;
-      // this.startTimer();
-      // console.log("done, work time");
     },
 
     ...mapMutations({
@@ -419,9 +395,37 @@ export default {
     },
     todoDone() {
       console.log("well todo done");
-      // this.toggle(this.currentTodo);
-      this.launchSmallConfetti()
+      this.launchSmallConfetti();
       this.removeTodo(this.currentTodo);
+    },
+
+    signIn() {
+      let provider = new firebase.auth.GoogleAuthProvider();
+      this.$fire.auth
+        .signInWithPopup(provider)
+        .then(result => {
+          console.log("loggedin");
+          /** @type {firebase.auth.OAuthCredential} */
+          var credential = result.credential;
+
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log(result);
+        })
+        .catch(error => {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          console.log(e);
+        });
+      // console.log(this.$fire.auth)
+      // await this.$fire.auth.
     }
   }
 };
