@@ -242,7 +242,7 @@
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
           <p class="inline-flex items-center mt-2 text-xs italic text-gray-700">
-            Klik icon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk
+            Klik ikon &nbsp;<briefcase-icon class="text-teal-500" />&nbsp; untuk
             langsung dikerjakan
           </p>
         </div>
@@ -333,11 +333,13 @@
                 Bisa memilih waktu sendiri dengan fleksibel. 25, 5, atau 15
                 menit.
               </li>
+              <li>Bebas memilih kegiatan selanjutnya.</li>
               <li>Animasi perayaan saat waktu habis.</li>
               <li>Authentikasi mengguankan akun Google.</li>
               <li>Warna gradasi yang bagus.</li>
               <li>Notifikasi audio.</li>
-              <li>Statistik.</li>
+              <li>Statistik pengguna.</li>
+              <li>Ringan, cepat, dan mudah digunakan.</li>
             </ul>
           </div>
         </div>
