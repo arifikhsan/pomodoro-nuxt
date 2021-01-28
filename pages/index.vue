@@ -417,7 +417,7 @@ export default {
   computed: {
     title() {
       if (!this.run)
-        return "Pomodoro timer | Manajemen waktu dengan teknik pomodoro";
+        return "Pomodoro Timer | Manajemen waktu dengan teknik pomodoro";
       return `${this.formattedTimeLeft} | ${this.titlePomoState} | ${this.titlePomoCount}`;
     },
     titlePomoState() {
