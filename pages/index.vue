@@ -109,7 +109,7 @@
           class="fixed inset-0 z-10 p-4 bg-gray-900 bg-opacity-75"
         >
           <div
-            class="left-0 right-0 mt-2 origin-top bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+            class="left-0 right-0 max-w-xl mx-auto mt-2 origin-top bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
           >
             <div class="p-4">
               <div class="inline-flex items-center justify-between w-full">
@@ -130,7 +130,7 @@
                   <p>Loading...</p>
                 </div>
                 <div v-else class="text-sm text-center">
-                  <table class="table-auto">
+                  <table class="w-full table-auto">
                     <tr>
                       <th>Nama</th>
                       <th>Podomoro</th>
