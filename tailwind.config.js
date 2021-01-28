@@ -6,10 +6,6 @@
  */
 module.exports = {
   theme: {},
-  variants: {
-    extend: {
-      textColor: ["group-hover"]
-    }
-  },
+  variants: {},
   plugins: [require("@tailwindcss/typography")]
 };

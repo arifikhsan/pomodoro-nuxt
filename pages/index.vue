@@ -1,7 +1,9 @@
 <template>
   <div class="max-w-xl px-4 pb-16 mx-auto">
     <div class="flex items-center justify-between py-2 text-center border-b">
-      <h1 class="text-3xl font-bold text-green-500">
+      <h1
+        class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+      >
         <span v-show="pomoCount > 0">{{ pomoCount }}</span>
         <span>Pomodoro</span>
       </h1>
@@ -144,17 +146,23 @@
 
     <div v-show="message" class="my-4 text-center">
       <p
-        class="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded"
+        class="px-4 py-2 text-sm font-semibold text-white rounded from-teal-400 to-blue-500 bg-gradient-to-tr"
       >
         {{ message }}
       </p>
     </div>
     <div class="mt-4 text-center">
       <div>
-        <p class="text-5xl font-bold text-green-500">{{ formattedTimeLeft }}</p>
+        <p
+          class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+        >
+          {{ formattedTimeLeft }}
+        </p>
       </div>
       <div class="mt-4">
-        <h2 class="text-3xl font-bold leading-none text-green-500">
+        <h2
+          class="text-3xl font-bold leading-none text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+        >
           {{ currentTodo ? currentTodo.text : "Lagi nganggur." }}
         </h2>
       </div>
@@ -163,7 +171,7 @@
           @click="pomoTimeSelected"
           :class="[
             timeActive === 'pomo'
-              ? 'bg-green-500 text-white'
+              ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
               : 'border border-green-500 border-dashed'
           ]"
           class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
@@ -173,7 +181,7 @@
         <button
           :class="[
             timeActive === 'short'
-              ? 'bg-green-500 text-white'
+              ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
               : 'border border-green-500 border-dashed'
           ]"
           @click="shortRestTimeSelected"
@@ -185,7 +193,7 @@
           @click="longRestTimeSelected"
           :class="[
             timeActive === 'long'
-              ? 'bg-green-500 text-white'
+              ? 'bg-gradient-to-r from-teal-400 to-blue-500 text-white'
               : 'border border-green-500 border-dashed'
           ]"
           class="px-2 py-1 text-sm transition duration-500 rounded focus:outline-none"
@@ -198,21 +206,28 @@
           v-show="currentTodo"
           v-if="state == 0 || state == 2"
           @click="startPomo"
-          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
         >
           <play-icon />
         </button>
         <button
           v-if="state == 1"
           @click="pauseTimer"
-          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow hover:scale-95 bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
         >
           <pause-icon />
         </button>
         <button
+          v-if="state == 1 || state == 2"
+          @click="stopTimer"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow hover:scale-95 bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
+        >
+          <stop-icon />
+        </button>
+        <button
           v-if="currentTodo"
           @click="todoDone"
-          class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
+          class="p-2 text-white transition duration-500 transform rounded-full shadow hover:scale-95 bg-gradient-to-tr from-teal-400 to-blue-500 focus:outline-none"
         >
           <check-icon />
         </button>
@@ -232,21 +247,17 @@
             v-else
             v-for="todo in nextTodos"
             :key="todo.id"
-            class="flex justify-between px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded cursor-pointer hover:bg-green-500 hover:text-white"
+            class="flex justify-between px-4 py-2 text-green-500 transition duration-500 border border-green-400 rounded cursor-pointer hover:text-white bg-gradient-to-r hover:from-teal-400 to-blue-500"
           >
             <p>
               {{ todo.text }}
             </p>
             <div class="inline-flex items-center space-x-2 group">
               <button @click="todoSetActive(todo)">
-                <briefcase-icon
-                  class="text-green-500 transition duration-500 hover:text-white group-hover:text-white"
-                />
+                <briefcase-icon />
               </button>
               <button @click="removeTodo(todo)">
-                <delete-icon
-                  class="text-green-500 transition duration-500 hover:text-white group-hover:text-white"
-                />
+                <delete-icon />
               </button>
             </div>
           </div>
@@ -296,13 +307,14 @@ import confetti from "canvas-confetti";
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
+import stop from "@/components/icons/stop";
 import check from "@/components/icons/check";
 import edit from "@/components/icons/edit";
 import close from "@/components/icons/close";
 import deleteIcon from "@/components/icons/delete";
 import briefcase from "@/components/icons/briefcase";
 
-import alarm from '@/assets/audio/alarm.mp3'
+import alarm from "@/assets/audio/alarm.mp3";
 
 export default {
   head() {
@@ -313,6 +325,7 @@ export default {
   components: {
     "play-icon": play,
     "pause-icon": pause,
+    "stop-icon": stop,
     "check-icon": check,
     "edit-icon": edit,
     "close-icon": close,
@@ -428,11 +441,13 @@ export default {
     },
     pauseTimer() {
       this.state = 2;
-      this.message = 'Pomodoro dihentikan sebentar.'
+      this.message = "Pomodoro dijeda.";
       clearInterval(this.timerInterval);
     },
     stopTimer() {
-      this.state = 2;
+      this.state = 0;
+      this.message = "Pomodoro berhenti.";
+      this.timePassed = 0;
       clearInterval(this.timerInterval);
     },
     onTimesUp() {
@@ -476,8 +491,8 @@ export default {
         console.log("congrats");
       }
 
-      let audio = new Audio(alarm)
-      audio.play()
+      let audio = new Audio(alarm);
+      audio.play();
     },
 
     startPomo() {
