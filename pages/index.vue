@@ -6,7 +6,7 @@
         <span>Pomodoro</span>
       </h1>
       <button
-        @click="launchConfetti"
+        @click="launchBigConfetti"
         class="px-4 py-2 text-sm text-green-500 border border-green-500 rounded"
       >
         Login
@@ -25,7 +25,7 @@
       </div>
       <div class="mt-4">
         <h2 class="text-3xl font-bold leading-none text-green-500">
-          {{ currentTodo ? currentTodo.text : 'Lagi nganggur.' }}
+          {{ currentTodo ? currentTodo.text : "Lagi nganggur." }}
         </h2>
       </div>
       <div class="mt-10 space-x-4">
@@ -65,6 +65,7 @@
       </div>
       <div class="mt-6 space-x-2">
         <button
+          v-show="currentTodo"
           v-if="state == 0 || state == 2"
           @click="startPomo"
           class="p-2 text-white transition duration-500 transform rounded-full shadow bg-gradient-to-tr from-green-400 to-blue-500 focus:outline-none"
@@ -87,22 +88,31 @@
         </button>
       </div>
       <div class="grid gap-4 py-8 mt-2 text-center">
-        <h2 class="text-xl font-bold text-gray-700">Kegiatan selanjutnya</h2>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">Kegiatan selanjutnya</h2>
+          <p class="text-xs italic text-gray-700">
+            Klik kegiatan untuk dikerjakan
+          </p>
+        </div>
         <div class="grid gap-4 mt-4">
-          {{ nextTodos }}
-          <div v-if="isEmpty(nextTodos)">
-            <p class="text-sm italic">Itu saja :)</p>
+          <div v-if="nextTodos.length <= 0">
+            <p class="py-2 text-sm italic text-gray-700">Itu saja :)</p>
           </div>
           <div
             v-else
             v-for="todo in nextTodos"
             :key="todo.id"
-            class="flex justify-between px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded hover:bg-green-500 hover:text-white"
+            class="flex justify-between px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded cursor-pointer hover:bg-green-500 hover:text-white"
           >
             <p>
               {{ todo.text }}
             </p>
             <div class="inline-flex items-center space-x-2 group">
+              <button @click="todoSetActive(todo)">
+                <briefcase-icon
+                  class="text-green-500 transition duration-500 hover:text-white group-hover:text-white"
+                />
+              </button>
               <button @click="removeTodo(todo)">
                 <delete-icon
                   class="text-green-500 transition duration-500 hover:text-white group-hover:text-white"
@@ -113,9 +123,13 @@
           <form @submit.prevent="addTodo">
             <input
               v-model="newTodoText"
-              class="px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded"
+              class="w-full px-4 py-2 text-gray-800 transition duration-500 border border-green-400 rounded"
               placeholder="Tambah kegiatan baru..."
+              required
             />
+            <span class="text-sm italic text-gray-700"
+              >Tekan "Enter" untuk menambahkan kegiatan</span
+            >
           </form>
         </div>
       </div>
@@ -152,13 +166,14 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import confetti from "canvas-confetti";
-import { isEmpty } from 'lodash';
+import { isEmpty } from "lodash";
 
 import play from "@/components/icons/play";
 import pause from "@/components/icons/pause";
 import check from "@/components/icons/check";
 import edit from "@/components/icons/edit";
 import deleteIcon from "@/components/icons/delete";
+import briefcase from "@/components/icons/briefcase";
 
 export default {
   head() {
@@ -171,7 +186,8 @@ export default {
     "pause-icon": pause,
     "check-icon": check,
     "edit-icon": edit,
-    "delete-icon": deleteIcon
+    "delete-icon": deleteIcon,
+    "briefcase-icon": briefcase
   },
   data() {
     return {
@@ -233,7 +249,7 @@ export default {
     // currentTodo() {
     //   return this.$store.state.todos[0];
     // },
-    ...mapGetters("todos", ["currentTodo", 'nextTodos']),
+    ...mapGetters("todos", ["currentTodo", "nextTodos", "unfinishedTodos"]),
     // nextTodos() {
     //   let currentTodos = [...this.$store.state.todos.list];
     //   currentTodos.shift();
@@ -313,7 +329,7 @@ export default {
           this.pomoCount = 0;
           this.longRestTimeSelected();
           // yay enjoy!
-          this.launchConfetti();
+          this.launchBigConfetti();
         }
       } else if (this.timeActive == "long") {
         this.message =
@@ -356,7 +372,14 @@ export default {
       this.$store.commit("todos/remove", todo);
     },
 
-    launchConfetti() {
+    launchSmallConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    },
+    launchBigConfetti() {
       if (typeof window !== "undefined") {
         var duration = 5 * 1000;
         var animationEnd = Date.now() + duration;
@@ -391,11 +414,14 @@ export default {
       }
     },
 
+    todoSetActive(todo) {
+      this.$store.commit("todos/moveToFirst", todo);
+    },
     todoDone() {
       console.log("well todo done");
-      // console.log(this.currentTodo)
-      // console.log(this.toggle)
-      this.toggle(this.currentTodo)
+      // this.toggle(this.currentTodo);
+      this.launchSmallConfetti()
+      this.removeTodo(this.currentTodo);
     }
   }
 };

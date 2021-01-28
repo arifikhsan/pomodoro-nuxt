@@ -28,23 +28,35 @@ export const mutations = {
       done: false
     });
   },
-  remove(state, { todo }) {
+  remove(state, todo) {
     state.list.splice(state.list.indexOf(todo), 1);
   },
   toggle(state, todo) {
     todo.done = !todo.done;
-  }
+  },
+  moveToFirst(state, todo) {
+    state.list.splice(state.list.indexOf(todo), 1);
+    state.list.unshift(todo);
+  },
+  // setActive(state, todo) {
+  //   state.list.splice(state.list.indexOf(todo), 1);
+  //   state.list.push({
+  //     id: uuidv4(),
+  //     text,
+  //     done: false
+  //   });
+  // }
 };
 
 export const getters = {
-  activeTodos(state) {
-    return state.list.filter(todo => todo.done === false)
+  unfinishedTodos(state) {
+    return state.list.filter(todo => todo.done === false);
   },
   currentTodo(state, getters) {
-    return getters.activeTodos[0];
+    return getters.unfinishedTodos[0];
   },
   nextTodos(state, getters) {
-    let currentTodos = [...getters.activeTodos];
+    let currentTodos = [...getters.unfinishedTodos];
     currentTodos.shift();
     return currentTodos;
   },
