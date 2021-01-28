@@ -1,12 +1,14 @@
 <template>
   <div class="max-w-xl px-4 pb-16 mx-auto">
     <div class="flex items-center justify-between py-2 text-center border-b">
-      <h1
-        class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
-      >
-        <span v-show="pomoCount > 0">{{ pomoCount }}</span>
-        <span>Pomodoro</span>
-      </h1>
+      <nuxt-link to="/">
+        <h1
+          class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+        >
+          <span v-show="pomoCount > 0">{{ pomoCount }}</span>
+          <span>Pomodoro</span>
+        </h1>
+      </nuxt-link>
       <client-only>
         <div class="relative inline-block text-left">
           <div>
@@ -93,23 +95,27 @@
     </div>
 
     <client-only>
-      <div class="relative">
-        <!-- Statistic Panel -->
-        <transition
-          enter-active-class="transition duration-100 ease-out transform"
-          enter-from-class="scale-95 opacity-0"
-          enter-to-class="scale-100 opacity-100"
-          leave-active-class="transition duration-75 ease-in transform"
-          leave-from-class="scale-100 opacity-100"
-          leave-to-class="scale-95 opacity-0"
+      <!-- Statistic Panel -->
+      <transition
+        enter-active-class="transition duration-100 ease-out transform"
+        enter-from-class="scale-95 opacity-0"
+        enter-to-class="scale-100 opacity-100"
+        leave-active-class="transition duration-75 ease-in transform"
+        leave-from-class="scale-100 opacity-100"
+        leave-to-class="scale-95 opacity-0"
+      >
+        <div
+          v-show="isStatisticOpen"
+          class="fixed inset-0 z-10 p-4 bg-gray-900 bg-opacity-75"
         >
           <div
-            v-show="isStatisticOpen"
-            class="absolute left-0 right-0 mt-2 origin-top bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+            class="left-0 right-0 mt-2 origin-top bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
           >
             <div class="p-4">
               <div class="inline-flex items-center justify-between w-full">
-                <h1 class="text-3xl font-bold leading-none text-green-500">
+                <h1
+                  class="text-3xl font-bold leading-none text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500"
+                >
                   Statistik
                 </h1>
                 <button
@@ -140,8 +146,8 @@
               </div>
             </div>
           </div>
-        </transition>
-      </div>
+        </div>
+      </transition>
     </client-only>
 
     <div v-show="message" class="my-4 text-center">
@@ -247,7 +253,7 @@
             v-else
             v-for="todo in nextTodos"
             :key="todo.id"
-            class="flex justify-between px-4 py-2 text-green-500 transition duration-500 border border-green-400 rounded cursor-pointer hover:text-white bg-gradient-to-r hover:from-teal-400 to-blue-500"
+            class="flex justify-between px-4 py-2 text-green-500 transition duration-500 border border-green-400 rounded cursor-pointer hover:border-opacity-0 hover:text-white bg-gradient-to-r hover:from-teal-400 hover:to-blue-500"
           >
             <p>
               {{ todo.text }}
@@ -277,7 +283,25 @@
       <div class="pt-8 border-t">
         <div class="prose text-left">
           <div>
-            <h1>Cara menggunakan timer Pomodoro</h1>
+            <h1>Apa ini?</h1>
+            <p>
+              Exercitation voluptate quis duis nisi anim sit esse ut do Lorem
+              esse. Minim reprehenderit in eu anim consequat excepteur magna est
+              enim fugiat. Magna aliqua amet voluptate est eiusmod enim sint
+              sunt. Consequat id nulla tempor amet sunt aute anim.
+            </p>
+          </div>
+          <div>
+            <h1>Untuk apa?</h1>
+            <p>
+              Exercitation voluptate quis duis nisi anim sit esse ut do Lorem
+              esse. Minim reprehenderit in eu anim consequat excepteur magna est
+              enim fugiat. Magna aliqua amet voluptate est eiusmod enim sint
+              sunt. Consequat id nulla tempor amet sunt aute anim.
+            </p>
+          </div>
+          <div>
+            <h1>Bagaimana caranya?</h1>
             <ol>
               <li>Tambahkan kegiatan baru.</li>
               <li>Pilih kegiatan yang mau dikerjakan.</li>
@@ -640,6 +664,7 @@ export default {
             }
           });
 
+          this.message = `Selamat datang, ${this.authUser.name}.`;
           console.log("loggedin");
         })
         .catch(error => {
@@ -649,6 +674,7 @@ export default {
     },
     async signOut() {
       await this.$fire.auth.signOut();
+      this.message = `Selamat tinggal, ${this.authUser.name}.`;
       this.$store.dispatch("onAuthStateChanged", false);
     },
 
