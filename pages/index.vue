@@ -351,6 +351,7 @@
               <li>Warna gradasi yang bagus.</li>
               <li>Notifikasi audio.</li>
               <li>Statistik pengguna.</li>
+              <li>Progress bar untuk memantau proses waktu dalam grafik batang dan persen.</li>
               <li>Ringan, cepat, dan mudah digunakan.</li>
             </ul>
           </div>
