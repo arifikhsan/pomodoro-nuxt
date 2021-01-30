@@ -163,7 +163,7 @@
     >
       <div class="absolute w-full h-full bg-gray-200"></div>
       <div
-        :style="{ width: `${progressValue}vh` }"
+        :style="{ width: `${progressValue}%` }"
         class="relative h-full transition-all duration-500 ease-out from-teal-400 to-blue-500 bg-gradient-to-tr"
       >
         {{ progressValue }}%
