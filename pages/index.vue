@@ -665,6 +665,7 @@ export default {
     },
     async todoDone() {
       console.log("well todo done");
+      this.message = `Kegiatan "${this.currentTodo.text}" telah selesai :D`
       this.launchSmallConfetti();
       this.removeTodo(this.currentTodo);
       if (this.isLoggedIn) {
