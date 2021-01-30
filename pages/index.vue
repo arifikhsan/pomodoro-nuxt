@@ -50,7 +50,7 @@
             <div
               v-show="isMenuOpen"
               @click="isMenuOpen = !isMenuOpen"
-              class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+              class="absolute right-0 z-50 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
             >
               <div
                 class="py-1"
